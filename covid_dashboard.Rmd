@@ -91,9 +91,10 @@ radioButtons('dtype', 'Type:' , choices = c('Total Cases'=1,'Total Deaths'=2, 'N
 ```{r}
 output$interact = renderText({'The plots are interactive. You can use the tools at the top right of the figure to manipulate the graphs! :)'})
 output$update = renderText({last_update})
-output$disclaimer = renderText({'This dashboard was made as an assignment for the course "Data Science for 
+output$disclaimer = renderText({'This dashboard was made as an assignment for the course "Advanced Data Science for 
 Biomedical Engineering" at Johns Hopkins University. This is not official health information and should not be used as so. 
-Data comes from: https://ourworldindata.org/coronavirus-source-data'})
+Data comes from: https://ourworldindata.org/coronavirus-source-data.
+  **Update** Our World In Data changed its source of data as of November 2020 making this dashboard outdated. For official, continuously updated COVID-19 data and dashboard visit https://systems.jhu.edu/.'})
 textOutput({'interact'})
 
 textOutput({'update'})

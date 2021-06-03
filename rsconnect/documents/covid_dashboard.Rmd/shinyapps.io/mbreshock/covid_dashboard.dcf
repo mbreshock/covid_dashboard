@@ -1,0 +1,13 @@
+name: covid_dashboard
+title: covid_dashboard
+username:
+account: mbreshock
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1969726
+bundleId: 4675305
+url: https://mbreshock.shinyapps.io/covid_dashboard/
+when: 1622763017.28111
+lastSyncTime: 1622763017.28115
+asMultiple: FALSE
+asStatic: FALSE
