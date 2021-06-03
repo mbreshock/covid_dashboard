@@ -1,0 +1,126 @@
+---
+title: "US & World Coronavirus Status Tracker"
+output: flexdashboard::flex_dashboard
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard); library(gridExtra)
+library(tidyr) ; library(tidyverse)
+library(ggplot2) ; library(dplyr) ; library(plotly)
+```
+
+```{r global, include=FALSE}
+
+total_cases = read.csv('https://covid.ourworldindata.org/data/ecdc/total_cases.csv')
+total_cases = select(total_cases,date,World,United.States,Russia,China,Italy,United.Kingdom,Japan)
+
+total_deaths = read.csv('https://covid.ourworldindata.org/data/ecdc/total_deaths.csv')
+total_deaths = select(total_deaths,date,World,United.States,Russia,China,Italy,United.Kingdom,Japan)
+
+new_cases = read.csv('https://covid.ourworldindata.org/data/ecdc/new_cases.csv')
+new_cases = select(new_cases,date,World,United.States,Russia,China,Italy,United.Kingdom,Japan)
+
+new_deaths = read.csv('https://covid.ourworldindata.org/data/ecdc/new_deaths.csv')
+new_deaths = select(new_deaths,date,World,United.States,Russia,China,Italy,United.Kingdom,Japan)
+
+last_row = length(total_cases$date)
+last_update = paste('Last Update: ',as.character(total_cases$date[last_row]), sep = "") 
+
+countrygraphs = function(dtype){
+   if(dtype==1){
+    countries = pivot_longer(total_cases,c('China','United.States','Italy','Russia','United.Kingdom','Japan'),
+                             names_to = 'Region',values_to = 'Cases')
+    countryplot = ggplot(countries,aes(x = as.Date(date), y = Cases, col = Region)) + geom_line() + ggtitle('Number of Total Cases per Region') +
+      xlab('Date (Months)') + ylab('Number of Cases')
+    
+  } else if(dtype==2){
+    countries = pivot_longer(total_deaths,c('China','United.States','Italy','Russia','United.Kingdom','Japan'),
+                             names_to = 'Region',values_to = 'Deaths')
+    countryplot = ggplot(countries,aes(x = as.Date(date), y = Deaths, col = Region)) + geom_line() + ggtitle('Number of Total Deaths per Region') +
+      xlab('Date (Months)') + ylab('Number of Deaths')
+
+  } else if(dtype==3){
+    countries = pivot_longer(new_cases,c('China','United.States','Italy','Russia','United.Kingdom','Japan'),
+                             names_to = 'Region',values_to = 'Cases')
+    countryplot = ggplot(countries,aes(x = as.Date(date), y = Cases, col = Region)) + geom_line() + ggtitle('Number of New Cases per Region') +
+      xlab('Date (Months)') + ylab('Number of Cases')
+
+  } else {
+    countries = pivot_longer(new_deaths,c('China','United.States','Italy','Russia','United.Kingdom','Japan'),
+                             names_to = 'Region',values_to = 'Deaths')
+    countryplot = ggplot(countries,aes(x = as.Date(date), y = Deaths, col = Region)) + geom_line() + ggtitle('Number of New Deaths per Region') +
+      xlab('Date (Months)') + ylab('Number of Deaths')
+  }
+  countryplotly = ggplotly(countryplot)
+  return(countryplotly)
+}
+
+worldgraphs = function(dtype){
+   if(dtype==1){
+    worldplot = ggplot(total_cases,aes(x = as.Date(date), y = World)) + geom_line(color = "#00AFBB",size = 2) + 
+      ggtitle('Number of Total Cases in the World') + xlab('Date (Months)') + ylab('Number of Cases')
+
+  } else if(dtype==2){
+    worldplot = ggplot(total_deaths,aes(x = as.Date(date), y = World)) + geom_line(color = "#00AFBB",size = 2) + 
+      ggtitle('Number of Total Deaths in the World') + xlab('Date (Months)') + ylab('Number of Deaths')
+    
+  } else if(dtype==3){
+    worldplot = ggplot(new_cases,aes(x = as.Date(date), y = World)) + geom_line(color = "#00AFBB",size = 2) + 
+      ggtitle('Number of New Cases in the World') + xlab('Date (Months)') + ylab('Number of Cases')
+
+  } else {
+    worldplot = ggplot(new_deaths,aes(x = as.Date(date), y = World)) + geom_line(color = "#00AFBB",size = 2) + 
+      ggtitle('Number of New Deaths in the World') + xlab('Date (Months)') + ylab('Number of Deaths')
+  }
+  worldplotly = ggplotly(worldplot)
+  return(worldplotly)
+}
+
+```
+
+Column {.sidebar data-width=400}
+-----------------------------------------------------------------------
+
+### Choose the type of data you would like to view by selecting from the following buttons: 
+
+```{r}
+radioButtons('dtype', 'Type:' , choices = c('Total Cases'=1,'Total Deaths'=2, 'New Cases'=3, 'New Deaths'=4), inline = FALSE)
+```
+
+```{r}
+output$interact = renderText({'The plots are interactive. You can use the tools at the top right of the figure to manipulate the graphs! :)'})
+output$update = renderText({last_update})
+output$disclaimer = renderText({'This dashboard was made as an assignment for the course "Data Science for 
+Biomedical Engineering" at Johns Hopkins University. This is not official health information and should not be used as so. 
+Data comes from: https://ourworldindata.org/coronavirus-source-data'})
+textOutput({'interact'})
+
+textOutput({'update'})
+
+textOutput({'disclaimer'})
+```
+
+Column {data-width=600}
+-----------------------------------------------------------------------
+
+### Country Data
+
+```{r}
+output$plot1 = renderPlotly({
+dt=input$dtype
+countrygraphs(dt)
+})
+plotlyOutput({'plot1'})
+```
+
+### World Data
+
+```{r}
+output$plot2 = renderPlotly({
+  dt=input$dtype
+  worldgraphs(dt)
+})
+plotlyOutput({'plot2'})
+```
+
