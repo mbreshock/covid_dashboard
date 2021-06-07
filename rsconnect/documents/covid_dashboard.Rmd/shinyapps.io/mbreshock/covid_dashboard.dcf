@@ -5,9 +5,9 @@ account: mbreshock
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1969726
-bundleId: 4685452
+bundleId: 4689942
 url: https://mbreshock.shinyapps.io/covid_dashboard/
-when: 1623032363.21594
-lastSyncTime: 1623032363.21595
+when: 1623108325.97122
+lastSyncTime: 1623108325.97123
 asMultiple: FALSE
 asStatic: FALSE

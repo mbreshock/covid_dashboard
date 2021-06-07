@@ -95,7 +95,7 @@ New Deaths: New deaths attributed to COVID-19.
 output$interact = renderText({'The plots are interactive. You can use the tools at the top right of the figure to manipulate the graphs! :)'})
 output$update = renderText({last_update})
 output$disclaimer = renderText({'This dashboard was made as an assignment for the course "Advanced Data Science for 
-Biomedical Engineering" at Johns Hopkins University. This is not official health information and should not be used as so.'})
+Biomedical Engineering" at Johns Hopkins University. This is not official health information and should not be used as such.'})
 
 textOutput({'interact'})
 
