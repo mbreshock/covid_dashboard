@@ -25,4 +25,10 @@ slice_sample(covid_data, n = 10)
 ```{r}
 covid_data
 ```
+```{r}
+last_row = covid_data %>% 
+  slice(n())
+last_row
+paste('Last Update:',last_row$date) 
+```
 

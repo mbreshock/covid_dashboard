@@ -6,74 +6,69 @@ runtime: shiny
 
 ```{r setup, include=FALSE}
 library(flexdashboard); library(gridExtra)
-library(tidyr) ; library(tidyverse)
+library(tidyr) ; library(tidyverse) ; library(scales)
 library(ggplot2) ; library(dplyr) ; library(plotly)
 ```
 
 ```{r global, include=FALSE}
 
-total_cases = read.csv('https://covid.ourworldindata.org/data/ecdc/total_cases.csv')
-total_cases = select(total_cases,date,World,United.States,Russia,China,Italy,United.Kingdom,Japan)
+covid_data = read.csv("https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv")
 
-total_deaths = read.csv('https://covid.ourworldindata.org/data/ecdc/total_deaths.csv')
-total_deaths = select(total_deaths,date,World,United.States,Russia,China,Italy,United.Kingdom,Japan)
+count_data = covid_data %>%
+  filter(location == "United States" | location == "United Kingdom" |  location == "India" |
+         location == "Japan" | location == "China" | location == "Brazil" |
+         location == "Germany" | location == "Canada" | location == "Mexico" |
+         location == "Italy") %>%
+  select(location,date,total_cases,new_cases,total_deaths,new_deaths)
 
-new_cases = read.csv('https://covid.ourworldindata.org/data/ecdc/new_cases.csv')
-new_cases = select(new_cases,date,World,United.States,Russia,China,Italy,United.Kingdom,Japan)
+world_data = covid_data %>%
+  filter(location == "World") %>%
+  select(location,date,total_cases,new_cases,total_deaths,new_deaths)
 
-new_deaths = read.csv('https://covid.ourworldindata.org/data/ecdc/new_deaths.csv')
-new_deaths = select(new_deaths,date,World,United.States,Russia,China,Italy,United.Kingdom,Japan)
-
-last_row = length(total_cases$date)
-last_update = paste('Last Update: ',as.character(total_cases$date[last_row]), sep = "") 
+last_row = world_data %>% 
+  slice(n())
+last_update = paste('Last Update:',last_row$date) 
 
 countrygraphs = function(dtype){
    if(dtype==1){
-    countries = pivot_longer(total_cases,c('China','United.States','Italy','Russia','United.Kingdom','Japan'),
-                             names_to = 'Region',values_to = 'Cases')
-    countryplot = ggplot(countries,aes(x = as.Date(date), y = Cases, col = Region)) + geom_line() + ggtitle('Number of Total Cases per Region') +
-      xlab('Date (Months)') + ylab('Number of Cases')
+    countryplot = ggplot(count_data, aes(x = as.Date(date), y = total_cases, col = location)) + geom_line() + ggtitle('Number of Total Cases Over Time per Country') +
+      xlab('Date (Months)') + ylab('Total Number of Cases')
     
   } else if(dtype==2){
-    countries = pivot_longer(total_deaths,c('China','United.States','Italy','Russia','United.Kingdom','Japan'),
-                             names_to = 'Region',values_to = 'Deaths')
-    countryplot = ggplot(countries,aes(x = as.Date(date), y = Deaths, col = Region)) + geom_line() + ggtitle('Number of Total Deaths per Region') +
-      xlab('Date (Months)') + ylab('Number of Deaths')
+    countryplot = ggplot(count_data, aes(x = as.Date(date), y = new_cases, col = location)) + geom_line() + ggtitle('Number of New Cases Over Time per Country') +
+      xlab('Date (Months)') + ylab('Number of New Cases')
 
   } else if(dtype==3){
-    countries = pivot_longer(new_cases,c('China','United.States','Italy','Russia','United.Kingdom','Japan'),
-                             names_to = 'Region',values_to = 'Cases')
-    countryplot = ggplot(countries,aes(x = as.Date(date), y = Cases, col = Region)) + geom_line() + ggtitle('Number of New Cases per Region') +
-      xlab('Date (Months)') + ylab('Number of Cases')
+    countryplot = ggplot(count_data, aes(x = as.Date(date), y = total_deaths, col = location)) + geom_line() + ggtitle('Number of Total Deaths Over Time per Country') +
+      xlab('Date (Months)') + ylab('Total Number of Deaths')
 
   } else {
-    countries = pivot_longer(new_deaths,c('China','United.States','Italy','Russia','United.Kingdom','Japan'),
-                             names_to = 'Region',values_to = 'Deaths')
-    countryplot = ggplot(countries,aes(x = as.Date(date), y = Deaths, col = Region)) + geom_line() + ggtitle('Number of New Deaths per Region') +
-      xlab('Date (Months)') + ylab('Number of Deaths')
+    countryplot = ggplot(count_data, aes(x = as.Date(date), y = new_deaths, col = location)) + geom_line() + ggtitle('Number of New Deaths Over Time per Country') +
+      xlab('Date (Months)') + ylab('Number of New Deaths')
   }
-  countryplotly = ggplotly(countryplot)
+  countryplotly = ggplotly(countryplot + scale_y_continuous(labels = scales::comma))
   return(countryplotly)
 }
 
 worldgraphs = function(dtype){
    if(dtype==1){
-    worldplot = ggplot(total_cases,aes(x = as.Date(date), y = World)) + geom_line(color = "#00AFBB",size = 2) + 
-      ggtitle('Number of Total Cases in the World') + xlab('Date (Months)') + ylab('Number of Cases')
+    worldplot = ggplot(world_data, aes(x = as.Date(date), y = total_cases)) + geom_line(color = "#00AFBB",size = 1) + 
+      ggtitle('Number of Total Cases in the World Over Time') + xlab('Date (Months)') + ylab('Total Number of Cases')
 
   } else if(dtype==2){
-    worldplot = ggplot(total_deaths,aes(x = as.Date(date), y = World)) + geom_line(color = "#00AFBB",size = 2) + 
-      ggtitle('Number of Total Deaths in the World') + xlab('Date (Months)') + ylab('Number of Deaths')
+    worldplot = ggplot(world_data, aes(x = as.Date(date), y = new_cases)) + geom_line(color = "#00AFBB",size = 1) + 
+      ggtitle('Number of New Cases in the World Over Time') + xlab('Date (Months)') + ylab('Number of New Cases')
+
     
   } else if(dtype==3){
-    worldplot = ggplot(new_cases,aes(x = as.Date(date), y = World)) + geom_line(color = "#00AFBB",size = 2) + 
-      ggtitle('Number of New Cases in the World') + xlab('Date (Months)') + ylab('Number of Cases')
+    worldplot = ggplot(world_data, aes(x = as.Date(date), y = total_deaths)) + geom_line(color = "#00AFBB",size = 1) + 
+      ggtitle('Number of Total Deaths in the World Over Time') + xlab('Date (Months)') + ylab('Total Number of Deaths')
 
   } else {
-    worldplot = ggplot(new_deaths,aes(x = as.Date(date), y = World)) + geom_line(color = "#00AFBB",size = 2) + 
-      ggtitle('Number of New Deaths in the World') + xlab('Date (Months)') + ylab('Number of Deaths')
+    worldplot = ggplot(world_data,aes(x = as.Date(date), y = new_deaths)) + geom_line(color = "#00AFBB",size = 1) + 
+      ggtitle('Number of New Deaths in the World Over Time') + xlab('Date (Months)') + ylab('Number of New Deaths')
   }
-  worldplotly = ggplotly(worldplot)
+  worldplotly = ggplotly(worldplot + scale_y_continuous(labels = scales::comma))
   return(worldplotly)
 }
 
@@ -85,7 +80,7 @@ Column {.sidebar data-width=400}
 ### Choose the type of data you would like to view by selecting from the following buttons: 
 
 ```{r}
-radioButtons('dtype', 'Type:' , choices = c('Total Cases'=1,'Total Deaths'=2, 'New Cases'=3, 'New Deaths'=4), inline = FALSE)
+radioButtons('dtype', 'Type:' , choices = c('Total Cases'=1,'New Cases'=2, 'Total Deaths'=3, 'New Deaths'=4), inline = FALSE)
 ```
 
 ```{r}
