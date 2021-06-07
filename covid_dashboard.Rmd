@@ -74,7 +74,7 @@ worldgraphs = function(dtype){
 
 ```
 
-Column {.sidebar data-width=400}
+Column {.sidebar data-width=350}
 -----------------------------------------------------------------------
 
 ### Choose the type of data you would like to view by selecting from the following buttons: 
@@ -83,13 +83,20 @@ Column {.sidebar data-width=400}
 radioButtons('dtype', 'Type:' , choices = c('Total Cases'=1,'New Cases'=2, 'Total Deaths'=3, 'New Deaths'=4), inline = FALSE)
 ```
 
+Total Cases: Total confirmed cases of COVID-19.
+  
+New Cases: New confirmed cases of COVID-19.
+  
+Total Deaths: Total deaths attributed to COVID-19.
+  
+New Deaths: New deaths attributed to COVID-19.
+
 ```{r}
 output$interact = renderText({'The plots are interactive. You can use the tools at the top right of the figure to manipulate the graphs! :)'})
 output$update = renderText({last_update})
 output$disclaimer = renderText({'This dashboard was made as an assignment for the course "Advanced Data Science for 
-Biomedical Engineering" at Johns Hopkins University. This is not official health information and should not be used as so. 
-Data comes from: https://ourworldindata.org/coronavirus-source-data.
-  **Update** Our World In Data changed its source of data as of November 2020 making this dashboard outdated. For official, continuously updated COVID-19 data and dashboard visit https://systems.jhu.edu/.'})
+Biomedical Engineering" at Johns Hopkins University. This is not official health information and should not be used as so.'})
+
 textOutput({'interact'})
 
 textOutput({'update'})
@@ -97,7 +104,14 @@ textOutput({'update'})
 textOutput({'disclaimer'})
 ```
 
-Column {data-width=600}
+Data comes from: [github.com/owid/covid-19-data/tree/master/public/data](https://github.com/owid/covid-19-data/tree/master/public/data).
+
+For official COVID-19 data and dashboard visit the [Johns Hopkins Center for Systems Science and Engineering (CSSE)](https://systems.jhu.edu/).
+
+Made by [Michael Breshock](https://mbreshock.github.io/).
+
+
+Column {data-width=650}
 -----------------------------------------------------------------------
 
 ### Country Data
