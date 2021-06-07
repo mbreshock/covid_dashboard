@@ -1,0 +1,28 @@
+---
+title: "covid_data_wrangling"
+output: html_notebook
+---
+```{r setup, include=FALSE}
+library(tidyverse); library(magrittr)
+library(ggplot2); library(plotly)
+```
+
+
+```{r}
+covid_data = read.csv("https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv")
+covid_data
+```
+```{r}
+covid_data %<>%
+  filter(location == "United States" | location == "United Kingdom" |  location == "India" |
+         location == "Japan" | location == "China" | location == "Brazil" |
+         location == "Germany" | location == "Canada" | location == "Mexico" |
+         location == "Italy" | location == "World") %>%
+  select(location,date,total_cases,new_cases,total_deaths,new_deaths)
+slice_sample(covid_data, n = 10)
+```
+
+```{r}
+covid_data
+```
+
