@@ -46,7 +46,8 @@ countrygraphs = function(dtype){
     countryplot = ggplot(count_data, aes(x = as.Date(date), y = new_deaths, col = location)) + geom_line() + ggtitle('Number of New Deaths Over Time per Country') +
       xlab('Date (Months)') + ylab('Number of New Deaths')
   }
-  countryplotly = ggplotly(countryplot + scale_y_continuous(labels = scales::comma))
+  countryplotly = ggplotly(countryplot + scale_y_continuous(labels = scales::comma) + 
+                             facet_wrap(~ location, ncol = 5))
   return(countryplotly)
 }
 
