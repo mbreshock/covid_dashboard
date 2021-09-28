@@ -32,22 +32,26 @@ last_update = paste('Last Update:',last_row$date)
 countrygraphs = function(dtype){
    if(dtype==1){
     countryplot = ggplot(count_data, aes(x = as.Date(date), y = total_cases, col = location)) + geom_line() + ggtitle('Number of Total Cases Over Time per Country') +
-      xlab('Date (Months)') + ylab('Total Number of Cases')
+      ylab('Total Number of Cases')
     
   } else if(dtype==2){
     countryplot = ggplot(count_data, aes(x = as.Date(date), y = new_cases, col = location)) + geom_line() + ggtitle('Number of New Cases Over Time per Country') +
-      xlab('Date (Months)') + ylab('Number of New Cases')
+      ylab('Number of New Cases')
 
   } else if(dtype==3){
     countryplot = ggplot(count_data, aes(x = as.Date(date), y = total_deaths, col = location)) + geom_line() + ggtitle('Number of Total Deaths Over Time per Country') +
-      xlab('Date (Months)') + ylab('Total Number of Deaths')
+      ylab('Total Number of Deaths')
 
   } else {
     countryplot = ggplot(count_data, aes(x = as.Date(date), y = new_deaths, col = location)) + geom_line() + ggtitle('Number of New Deaths Over Time per Country') +
-      xlab('Date (Months)') + ylab('Number of New Deaths')
+      ylab('Number of New Deaths')
   }
-  countryplotly = ggplotly(countryplot + scale_y_continuous(labels = scales::comma) + 
-                             facet_wrap(~ location, ncol = 5))
+  countryplotly = ggplotly(countryplot +
+                             facet_wrap(~ location, ncol = 5) + 
+                             theme(axis.text.x = element_blank(),
+                                   axis.title.x = element_blank(),
+                                   axis.title.y = element_blank()
+                          ))
   return(countryplotly)
 }
 
