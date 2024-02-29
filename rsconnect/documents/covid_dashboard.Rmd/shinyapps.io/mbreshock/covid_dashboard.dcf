@@ -5,9 +5,8 @@ account: mbreshock
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1969726
-bundleId: 5079744
+bundleId: 8313690
 url: https://mbreshock.shinyapps.io/covid_dashboard/
-when: 1632815390.36077
-lastSyncTime: 1632815390.36078
-asMultiple: FALSE
+asMultiple: TRUE
 asStatic: FALSE
+ignoredFiles: covid_data_wrangling.Rmd|old_covid_dashboard.Rmd
