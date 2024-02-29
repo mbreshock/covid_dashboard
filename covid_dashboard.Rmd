@@ -47,31 +47,33 @@ countrygraphs = function(dtype){
       ylab('Number of New Deaths')
   }
   countryplotly = ggplotly(countryplot +
+                             scale_y_continuous(labels = scales::comma) +
                              facet_wrap(~ location, ncol = 5) + 
                              theme(axis.text.x = element_blank(),
                                    axis.title.x = element_blank(),
-                                   axis.title.y = element_blank()
-                          ))
+                                   axis.title.y = element_blank(),
+                                   legend.position = "none")
+                           )
   return(countryplotly)
 }
 
 worldgraphs = function(dtype){
    if(dtype==1){
     worldplot = ggplot(world_data, aes(x = as.Date(date), y = total_cases)) + geom_line(color = "#00AFBB",size = 1) + 
-      ggtitle('Number of Total Cases in the World Over Time') + xlab('Date (Months)') + ylab('Total Number of Cases')
+      ggtitle('Number of Total Cases in the World Over Time') + xlab('Year') + ylab('Total Number of Cases')
 
   } else if(dtype==2){
     worldplot = ggplot(world_data, aes(x = as.Date(date), y = new_cases)) + geom_line(color = "#00AFBB",size = 1) + 
-      ggtitle('Number of New Cases in the World Over Time') + xlab('Date (Months)') + ylab('Number of New Cases')
+      ggtitle('Number of New Cases in the World Over Time') + xlab('Year') + ylab('Number of New Cases')
 
     
   } else if(dtype==3){
     worldplot = ggplot(world_data, aes(x = as.Date(date), y = total_deaths)) + geom_line(color = "#00AFBB",size = 1) + 
-      ggtitle('Number of Total Deaths in the World Over Time') + xlab('Date (Months)') + ylab('Total Number of Deaths')
+      ggtitle('Number of Total Deaths in the World Over Time') + xlab('Year') + ylab('Total Number of Deaths')
 
   } else {
     worldplot = ggplot(world_data,aes(x = as.Date(date), y = new_deaths)) + geom_line(color = "#00AFBB",size = 1) + 
-      ggtitle('Number of New Deaths in the World Over Time') + xlab('Date (Months)') + ylab('Number of New Deaths')
+      ggtitle('Number of New Deaths in the World Over Time') + xlab('Year') + ylab('Number of New Deaths')
   }
   worldplotly = ggplotly(worldplot + scale_y_continuous(labels = scales::comma))
   return(worldplotly)
